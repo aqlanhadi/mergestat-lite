@@ -29,16 +29,16 @@ func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCod
 	}
 
 	githubOpts := &Options{
-		RateLimiter: rateLimiter,
-		RateLimitHandler: func(rlr *options.GitHubRateLimitResponse) {
-			// for now, just log to debug output current status of rate limit
-			secondsUntilReset := time.Until(rlr.ResetAt.Time).Seconds()
-			opt.Logger.Debug().
-				Int("cost", rlr.Cost).
-				Int("remaining", rlr.Remaining).
-				Float64("seconds-until-reset", secondsUntilReset).
-				Msgf("handling rate limit")
-		},
+		// RateLimiter: rateLimiter,
+		// RateLimitHandler: func(rlr *options.GitHubRateLimitResponse) {
+		// 	// for now, just log to debug output current status of rate limit
+		// 	secondsUntilReset := time.Until(rlr.ResetAt.Time).Seconds()
+		// 	opt.Logger.Debug().
+		// 		Int("cost", rlr.Cost).
+		// 		Int("remaining", rlr.Remaining).
+		// 		Float64("seconds-until-reset", secondsUntilReset).
+		// 		Msgf("handling rate limit")
+		// },
 		GitHubPreRequestHook:  func() {},
 		GitHubPostRequestHook: func() {},
 		Client: func() *githubv4.Client {
@@ -49,7 +49,7 @@ func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCod
 			ctx := context.Background()
 			ctx = context.WithValue(ctx, oauth2.HTTPClient, sslcli)
 			httpClient := oauth2.NewClient(ctx, oauth2.StaticTokenSource(
-				&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
+				&oauth2.Token{AccessToken: GetGitHubTokenFromCtx(opt.Context)},
 			))
 			// client := githubv4.NewClient(httpClient)
 			client := githubv4.NewEnterpriseClient(os.Getenv("GRAPHQL_URL"), httpClient)
