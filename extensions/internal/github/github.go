@@ -42,7 +42,8 @@ func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCod
 			httpClient := oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(
 				&oauth2.Token{AccessToken: GetGitHubTokenFromCtx(opt.Context)},
 			))
-			client := githubv4.NewClient(httpClient)
+			// client := githubv4.NewClient(httpClient)
+			client := githubv4.NewEnterpriseClient("https://github.maybank.com/api/graphql", httpClient)
 			return client
 		},
 		PerPage: GetGitHubPerPageFromCtx(opt.Context),
