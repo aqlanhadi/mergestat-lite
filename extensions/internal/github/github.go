@@ -49,7 +49,7 @@ func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCod
 			ctx := context.Background()
 			ctx = context.WithValue(ctx, oauth2.HTTPClient, sslcli)
 			httpClient := oauth2.NewClient(ctx, oauth2.StaticTokenSource(
-				&oauth2.Token{AccessToken: GetGitHubTokenFromCtx(opt.Context)},
+				&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
 			))
 			// client := githubv4.NewClient(httpClient)
 			client := githubv4.NewEnterpriseClient(os.Getenv("GRAPHQL_URL"), httpClient)
