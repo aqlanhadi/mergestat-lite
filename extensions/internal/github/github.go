@@ -58,8 +58,14 @@ func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCod
 		// ctx = context.WithValue(ctx, oauth2.HTTPClient, sslcli)
 		Client: func() *githubv4.Client {
 			// ctx := context.Background()
+			token := GetGitHubTokenFromCtx(opt.Context)
+			
+			if token == "" {
+				opt.Logger.Debug().Msg("no token found in context")
+			}
+
 			ts := oauth2.StaticTokenSource(
-				&oauth2.Token{AccessToken: GetGitHubTokenFromCtx(opt.Context)},
+				&oauth2.Token{AccessToken: token},
 			)
 
 			// httpClient := &http.Client{
