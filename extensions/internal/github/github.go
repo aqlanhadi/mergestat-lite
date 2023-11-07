@@ -41,52 +41,16 @@ func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCod
 		},
 		GitHubPreRequestHook:  func() {},
 		GitHubPostRequestHook: func() {},
-		// Client: func() *githubv4.Client {
-		// 	httpClient := oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(
-		// 		&oauth2.Token{AccessToken: GetGitHubTokenFromCtx(opt.Context)},
-		// 	))
-		// 	// client := githubv4.NewClient(httpClient)
-		// 	client := githubv4.NewEnterpriseClient(os.Getenv("GRAPHQL_URL"), httpClient)
-		// 	return client
-		// },
-
-		// tr := &http.Transport{
-		// 	TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-		// }
-		// sslcli := &http.Client{Transport: tr}
-		// ctx := context.TODO()
-		// ctx = context.WithValue(ctx, oauth2.HTTPClient, sslcli)
 		Client: func() *githubv4.Client {
-			// ctx := context.Background()
-			token := GetGitHubTokenFromCtx(opt.Context)
-			
-			if token == "" {
-				opt.Logger.Debug().Msg("no token found in context")
-			}
-
-			ts := oauth2.StaticTokenSource(
-				&oauth2.Token{AccessToken: token},
-			)
-
-			// httpClient := &http.Client{
-			// 	Transport: &http.Transport{
-			// 		TLSClientConfig: &tls.Config{
-			// 			InsecureSkipVerify: true,
-			// 		},
-			// 	},
-				
-			// }
-			// ctx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
-
 			tr := &http.Transport{
 				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 			}
-			customTr := &http.Client{Transport: tr}
+			sslcli := &http.Client{Transport: tr}
 			ctx := context.Background()
-			ctx = context.WithValue(ctx, oauth2.HTTPClient, customTr)
-
-			httpClient := oauth2.NewClient(ctx, ts)
-		
+			ctx = context.WithValue(ctx, oauth2.HTTPClient, sslcli)
+			httpClient := oauth2.NewClient(ctx, oauth2.StaticTokenSource(
+				&oauth2.Token{AccessToken: GetGitHubTokenFromCtx(opt.Context)},
+			))
 			// client := githubv4.NewClient(httpClient)
 			client := githubv4.NewEnterpriseClient(os.Getenv("GRAPHQL_URL"), httpClient)
 			return client
