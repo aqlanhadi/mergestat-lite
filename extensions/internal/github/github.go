@@ -2,6 +2,8 @@ package github
 
 import (
 	"context"
+	"crypto/tls"
+	"net/http"
 	"os"
 	"time"
 
@@ -39,10 +41,29 @@ func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCod
 		},
 		GitHubPreRequestHook:  func() {},
 		GitHubPostRequestHook: func() {},
+		// Client: func() *githubv4.Client {
+		// 	httpClient := oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(
+		// 		&oauth2.Token{AccessToken: GetGitHubTokenFromCtx(opt.Context)},
+		// 	))
+		// 	// client := githubv4.NewClient(httpClient)
+		// 	client := githubv4.NewEnterpriseClient(os.Getenv("GRAPHQL_URL"), httpClient)
+		// 	return client
+		// },
 		Client: func() *githubv4.Client {
-			httpClient := oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(
+			httpClient := &http.Client{
+				Transport: &http.Transport{
+					TLSClientConfig: &tls.Config{
+						InsecureSkipVerify: true,
+					},
+				},
+			}
+		
+			ctx := context.Background()
+			ts := oauth2.StaticTokenSource(
 				&oauth2.Token{AccessToken: GetGitHubTokenFromCtx(opt.Context)},
-			))
+			)
+			httpClient = oauth2.NewClient(ctx, ts)
+		
 			// client := githubv4.NewClient(httpClient)
 			client := githubv4.NewEnterpriseClient(os.Getenv("GRAPHQL_URL"), httpClient)
 			return client
