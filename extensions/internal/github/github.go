@@ -29,18 +29,18 @@ func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCod
 	}
 
 	githubOpts := &Options{
-		// RateLimiter: rateLimiter,
-		// RateLimitHandler: func(rlr *options.GitHubRateLimitResponse) {
-		// 	// for now, just log to debug output current status of rate limit
-		// 	secondsUntilReset := time.Until(rlr.ResetAt.Time).Seconds()
-		// 	opt.Logger.Debug().
-		// 		Int("cost", rlr.Cost).
-		// 		Int("remaining", rlr.Remaining).
-		// 		Float64("seconds-until-reset", secondsUntilReset).
-		// 		Msgf("handling rate limit")
-		// },
-		// GitHubPreRequestHook:  func() {},
-		// GitHubPostRequestHook: func() {},
+		RateLimiter: rateLimiter,
+		RateLimitHandler: func(rlr *options.GitHubRateLimitResponse) {
+			// for now, just log to debug output current status of rate limit
+			secondsUntilReset := time.Until(rlr.ResetAt.Time).Seconds()
+			opt.Logger.Debug().
+				Int("cost", rlr.Cost).
+				Int("remaining", rlr.Remaining).
+				Float64("seconds-until-reset", secondsUntilReset).
+				Msgf("handling rate limit")
+		},
+		GitHubPreRequestHook:  func() {},
+		GitHubPostRequestHook: func() {},
 		// Client: func() *githubv4.Client {
 		// 	httpClient := oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(
 		// 		&oauth2.Token{AccessToken: GetGitHubTokenFromCtx(opt.Context)},
