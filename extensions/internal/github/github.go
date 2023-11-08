@@ -43,6 +43,9 @@ func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCod
 		// 		Float64("seconds-until-reset", secondsUntilReset).
 		// 		Msgf("handling rate limit")
 		// },
+		// Set RateLimitHandler to nil to disable rate limiting
+		RateLimiter: nil,
+		RateLimitHandler: nil,
 		GitHubPreRequestHook:  func() {},
 		GitHubPostRequestHook: func() {},
 		Client: func() *githubv4.Client {
