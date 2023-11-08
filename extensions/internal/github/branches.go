@@ -105,10 +105,10 @@ func (i *iterBranches) Next() (vtab.Row, error) {
 
 	if i.results == nil || i.current >= len(i.results.Edges) {
 		if i.results == nil || i.results.HasNextPage {
-			err := i.RateLimiter.Wait(context.Background())
-			if err != nil {
-				return nil, err
-			}
+			// err := i.RateLimiter.Wait(context.Background())
+			// if err != nil {
+			// 	return nil, err
+			// }
 
 			var cursor *githubv4.String
 			if i.results != nil {
@@ -127,7 +127,7 @@ func (i *iterBranches) Next() (vtab.Row, error) {
 				return nil, err
 			}
 
-			i.Options.RateLimitHandler(results.RateLimit)
+			// i.Options.RateLimitHandler(results.RateLimit)
 
 			i.results = results
 			i.current = 0
