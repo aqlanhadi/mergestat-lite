@@ -30,6 +30,7 @@ func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCod
 	opt.Logger.Debug().Msgf("GitHub token: %s", GetGitHubTokenFromCtx(opt.Context))
 	opt.Logger.Debug().Msgf("GitHub per page: %s", GetGitHubPerPageFromCtx(opt.Context))
 	opt.Logger.Debug().Msgf("GitHub rate limit: %s", GetGitHubRateLimitFromCtx(opt.Context))
+	opt.Logger.Debug().Msgf("GitHub GraphQL URL: %s", os.Getenv("GRAPHQL_URL"))
 
 	githubOpts := &Options{
 		// RateLimiter: rateLimiter,
