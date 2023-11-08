@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/mergestat/mergestat-lite/extensions/options"
 	"github.com/mergestat/mergestat-lite/extensions/services"
 	"github.com/rs/zerolog"
 	"github.com/shurcooL/githubv4"
@@ -14,8 +15,8 @@ import (
 
 type Options struct {
 	Client                func() *githubv4.Client
-	// RateLimiter           *rate.Limiter
-	// RateLimitHandler      func(*options.GitHubRateLimitResponse)
+	RateLimiter           *rate.Limiter
+	RateLimitHandler      func(*options.GitHubRateLimitResponse)
 	GitHubPreRequestHook  func()
 	GitHubPostRequestHook func()
 	// PerPage is the default number of items per page to use when making a paginated GitHub API request
