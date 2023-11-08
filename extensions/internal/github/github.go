@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/mergestat/mergestat-lite/extensions/options"
 	"github.com/pkg/errors"
@@ -13,20 +12,24 @@ import (
 	"github.com/shurcooL/githubv4"
 	"go.riyazali.net/sqlite"
 	"golang.org/x/oauth2"
-	"golang.org/x/time/rate"
 )
 
 // Register registers GitHub related functionality as a SQLite extension
 func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCode, err error) {
-	rateLimiter := GetGitHubRateLimitFromCtx(opt.Context)
-	if rateLimiter == nil {
-		rateLimiter = rate.NewLimiter(rate.Every(1*time.Second), 2)
-	}
+	// rateLimiter := GetGitHubRateLimitFromCtx(opt.Context)
+	// if rateLimiter == nil {
+	// 	rateLimiter = rate.NewLimiter(rate.Every(1*time.Second), 2)
+	// }
 
 	if opt.Logger == nil {
 		l := zerolog.Nop()
 		opt.Logger = &l
 	}
+
+	opt.Logger.Debug().Msg("registering GitHub extension")
+	opt.Logger.Debug().Msgf("GitHub token: %s", GetGitHubTokenFromCtx(opt.Context))
+	opt.Logger.Debug().Msgf("GitHub per page: %s", GetGitHubPerPageFromCtx(opt.Context))
+	opt.Logger.Debug().Msgf("GitHub rate limit: %s", GetGitHubRateLimitFromCtx(opt.Context))
 
 	githubOpts := &Options{
 		// RateLimiter: rateLimiter,
