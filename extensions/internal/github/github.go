@@ -74,7 +74,7 @@ func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCod
 
 	// if opt.GitHubRateLimitHandler != nil {
 	// 	githubOpts.RateLimitHandler = opt.GitHubRateLimitHandler
-	}
+	// }
 
 	if opt.GitHubPreRequestHook != nil {
 		githubOpts.GitHubPreRequestHook = opt.GitHubPreRequestHook
