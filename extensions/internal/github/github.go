@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/mergestat/mergestat-lite/extensions/options"
 	"github.com/pkg/errors"
@@ -12,14 +13,15 @@ import (
 	"github.com/shurcooL/githubv4"
 	"go.riyazali.net/sqlite"
 	"golang.org/x/oauth2"
+	"golang.org/x/time/rate"
 )
 
 // Register registers GitHub related functionality as a SQLite extension
 func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCode, err error) {
-	// rateLimiter := GetGitHubRateLimitFromCtx(opt.Context)
-	// if rateLimiter == nil {
-	// 	rateLimiter = rate.NewLimiter(rate.Every(1*time.Second), 2)
-	// }
+	rateLimiter := GetGitHubRateLimitFromCtx(opt.Context)
+	if rateLimiter == nil {
+		rateLimiter = rate.NewLimiter(rate.Every(1*time.Second), 2)
+	}
 
 	if opt.Logger == nil {
 		l := zerolog.Nop()
@@ -44,8 +46,8 @@ func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCod
 		// 		Msgf("handling rate limit")
 		// },
 		// Set RateLimitHandler to nil to disable rate limiting
-		RateLimiter: nil,
-		RateLimitHandler: nil,
+		// RateLimiter: nil,
+		// RateLimitHandler: nil,
 		GitHubPreRequestHook:  func() {},
 		GitHubPostRequestHook: func() {},
 		Client: func() *githubv4.Client {
