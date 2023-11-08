@@ -18,13 +18,13 @@ import (
 
 // Register registers GitHub related functionality as a SQLite extension
 func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCode, err error) {
-	opt.Logger.Debug().Msg("registering GitHub extension")
-	opt.Logger.Debug().Msgf("GitHub token: %s", GetGitHubTokenFromCtx(opt.Context))
-	opt.Logger.Debug().Msgf("GitHub per page: %s", GetGitHubPerPageFromCtx(opt.Context))
-	opt.Logger.Debug().Msgf("GitHub rate limit: %s", GetGitHubRateLimitFromCtx(opt.Context))
-	opt.Logger.Debug().Msgf("GitHub GraphQL URL: %s", os.Getenv("GRAPHQL_URL"))
+	// opt.Logger.Debug().Msg("registering GitHub extension")
+	// opt.Logger.Debug().Msgf("GitHub token: %s", GetGitHubTokenFromCtx(opt.Context))
+	// opt.Logger.Debug().Msgf("GitHub per page: %s", GetGitHubPerPageFromCtx(opt.Context))
+	// opt.Logger.Debug().Msgf("GitHub rate limit: %s", GetGitHubRateLimitFromCtx(opt.Context))
+	// opt.Logger.Debug().Msgf("GitHub GraphQL URL: %s", os.Getenv("GRAPHQL_URL"))
 
-	
+
 	rateLimiter := GetGitHubRateLimitFromCtx(opt.Context)
 	if rateLimiter == nil {
 		rateLimiter = rate.NewLimiter(rate.Every(1*time.Second), 2)
@@ -40,12 +40,14 @@ func Register(ext *sqlite.ExtensionApi, opt *options.Options) (_ sqlite.ErrorCod
 		RateLimiter: rateLimiter,
 		RateLimitHandler: func(rlr *options.GitHubRateLimitResponse) {
 			// for now, just log to debug output current status of rate limit
-			secondsUntilReset := time.Until(rlr.ResetAt.Time).Seconds()
-			opt.Logger.Debug().
-				Int("cost", rlr.Cost).
-				Int("remaining", rlr.Remaining).
-				Float64("seconds-until-reset", secondsUntilReset).
-				Msgf("handling rate limit")
+			// secondsUntilReset := time.Until(rlr.ResetAt.Time).Seconds()
+			// if opt.Logger != nil {
+			// 	opt.Logger.Debug().
+			// 		Int("cost", rlr.Cost).
+			// 		Int("remaining", rlr.Remaining).
+			// 		Float64("seconds-until-reset", secondsUntilReset).
+			// 		Msg("GitHub rate limit")
+			// }
 		},
 		// Set RateLimitHandler to nil to disable rate limiting
 		// RateLimiter: nil,
